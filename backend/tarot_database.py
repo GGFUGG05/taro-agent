@@ -896,7 +896,7 @@ def get_spread_interpretation(cards, positions, allow_reversals=True):
         # Create interpretation for this card
         card_interpretation = {
             "position": position,
-            "card": card["name"] + (" (Reversed)" if is_reversed else ""),
+            "card": f"{card['name']}{' (Reversed)' if is_reversed else ''}",
             "meaning": meaning,
             "interpretation": f"In the {position} position, {card['name']}{' (Reversed)' if is_reversed else ''} suggests {meaning}."
         }

@@ -143,6 +143,8 @@
     padding: 1rem;
     background-color: #f9f9f9;
     border-radius: 5px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
   }
   
   .cardMeaning h4 {
@@ -176,4 +178,26 @@
   
   .toggleButton:hover {
     background-color: #2980b9;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fadeIn {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .chatSection {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+    margin-top: 2rem;
   }

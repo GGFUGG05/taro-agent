@@ -13,6 +13,10 @@ export default function TarotReading() {
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [showChat, setShowChat] = useState(false);
+  const [displayStage, setDisplayStage] = useState(0);
+  const [flippedCards, setFlippedCards] = useState([]);
+  const [showMeanings, setShowMeanings] = useState(false);
+  const [cardsVisible, setCardsVisible] = useState(false);
 
   const spreadTypes = {
     'past-present-future': 'Past, Present, Future',
@@ -22,56 +26,107 @@ export default function TarotReading() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setDisplayStage(0);
+    setFlippedCards([]);
+    setCardsVisible(false);
+    setShowMeanings(false);
+    setShowChat(false);
     
     try {
-        const response = await axios.post('http://localhost:8000/api/tarot/reading', {
-            spread_type: spreadType,
-            allow_reversals: allowReversals,
-            question: question,
-            additional_context: context
-        });
+      const response = await axios.post('http://localhost:8000/api/tarot/reading', {
+        spread_type: spreadType,
+        allow_reversals: allowReversals,
+        question: question,
+        additional_context: context
+      });
       
-        const data = response.data;
+      const data = response.data;
+      setReading(data);
+      
+      // Start the progressive display
+      setDisplayStage(1); // Show spread title
+      
+      // Show all cards backs first
+      setTimeout(() => {
+        setCardsVisible(true);
         
-        setReading(data);
-        setShowChat(false);
-        
-        // Reset conversations when a new reading is performed
-        setConversations([]);
-        
-        // Add AI interpretation as first message if available
-        if (data.ai_interpretation) {
-            setConversations([
-                { role: 'assistant', content: data.ai_interpretation }
-            ]);
-            setShowChat(true);
-        }
+        // Start flipping cards after a delay
+        setTimeout(() => {
+          data.cards.forEach((_, index) => {
+            setTimeout(() => {
+              setFlippedCards(prev => [...prev, index]);
+            }, 1500 * (index + 1));
+          });
+        }, 1000); // Wait 1s after cards are visible before starting flips
+      }, 500);
+
+      // Reset conversations
+      setConversations([]);
+      
+      if (data.ai_interpretation) {
+        setConversations([
+          { role: 'assistant', content: data.ai_interpretation }
+        ]);
+      }
     } catch (error) {
-        console.error('Error:', error);
-        if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error('Response data:', error.response.data);
-            console.error('Response status:', error.response.status);
-            console.error('Response headers:', error.response.headers);
-            alert(`Error ${error.response.status}: ${error.response.data.detail || 'Failed to get Tarot reading'}`);
-        } else if (error.request) {
-            // The request was made but no response was received
-            console.error('Request error:', error.request);
-            alert('No response received from server. Please try again.');
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            console.error('Error message:', error.message);
-            alert('There was an error getting your Tarot reading. Please try again.');
-        }
+      console.error('Error:', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+        alert(`Error ${error.response.status}: ${error.response.data.detail || 'Failed to get Tarot reading'}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('Request error:', error.request);
+        alert('No response received from server. Please try again.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error message:', error.message);
+        alert('There was an error getting your Tarot reading. Please try again.');
+      }
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
+  // Progressive card flip effect
+  useEffect(() => {
+    if (displayStage === 1 && reading) {
+      // Start flipping cards one by one
+      const flipSequence = reading.cards.map((_, index) => {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            setFlippedCards(prev => [...prev, index]);
+            resolve();
+          }, 1500 * (index + 1)); // Flip each card with 1.5s delay
+        });
+      });
+
+      Promise.all(flipSequence).then(() => {
+        // After all cards are flipped, show meanings
+        setTimeout(() => {
+          setShowMeanings(true);
+          setDisplayStage(2);
+        }, 1000);
+      });
+    }
+  }, [displayStage, reading]);
+
+  // Show chat after meanings are displayed
+  useEffect(() => {
+    if (displayStage === 2 && showMeanings) {
+      setTimeout(() => {
+        setDisplayStage(3);
+        setShowChat(true);
+      }, 2000);
+    }
+  }, [displayStage, showMeanings]);
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Taro Tarot Reader</h1>
+      <h1 className={styles.title}>The Tarot Oracle</h1>
       
       <div className={styles.readingForm}>
         <form onSubmit={handleSubmit}>
@@ -137,7 +192,7 @@ export default function TarotReading() {
         </form>
       </div>
       
-      {reading && (
+      {reading && displayStage > 0 && (
         <div className={styles.readingResult}>
           <h2 className={styles.readingTitle}>
             {spreadTypes[reading.spread_type]} Spread
@@ -147,47 +202,68 @@ export default function TarotReading() {
             {reading.cards.map((card, index) => (
               <div key={index} className={styles.cardPosition}>
                 <h3 className={styles.positionTitle}>{reading.positions[index]}</h3>
-                <TarotCard card={card} />
+                <TarotCard 
+                  card={card} 
+                  isFlipped={flippedCards.includes(index)}
+                  animationDelay={0.8}
+                  isVisible={cardsVisible}
+                />
               </div>
             ))}
           </div>
           
-          <div className={styles.interpretation}>
-            <h3>Card Meanings</h3>
-            {reading.interpretation.cards.map((card, index) => (
-              <div key={index} className={styles.cardMeaning}>
-                <h4>{card.position}: {card.card}</h4>
-                <p>{card.meaning}</p>
-              </div>
-            ))}
-            
-            <h3>Overall Interpretation</h3>
-            <p>{reading.interpretation.narrative}</p>
-            
-            <h3>Insights</h3>
-            <ul className={styles.insights}>
-              {reading.interpretation.insights.map((insight, index) => (
-                <li key={index}>{insight}</li>
+          {showMeanings && (
+            <div className={`${styles.interpretation} ${styles.fadeIn}`}>
+              <h3>Card Meanings</h3>
+              {reading.interpretation.cards.map((card, index) => (
+                <div 
+                  key={index} 
+                  className={styles.cardMeaning}
+                  style={{ animationDelay: `${index * 0.5}s` }}
+                >
+                  <h4>{card.position}: {card.card}</h4>
+                  <p>{card.meaning}</p>
+                </div>
               ))}
-            </ul>
-            
-            <div className={styles.chatToggle}>
-              <button 
-                className={styles.toggleButton}
-                onClick={() => setShowChat(!showChat)}
-              >
-                {showChat ? 'Hide Chat' : 'Discuss Your Reading'}
-              </button>
+              
+              <h3 className={styles.fadeIn} style={{ animationDelay: '1.5s' }}>
+                Overall Interpretation
+              </h3>
+              <p className={styles.fadeIn} style={{ animationDelay: '2s' }}>
+                {reading.interpretation.narrative}
+              </p>
+              
+              <h3 className={styles.fadeIn} style={{ animationDelay: '2.5s' }}>
+                Insights
+              </h3>
+              <ul className={`${styles.insights} ${styles.fadeIn}`} style={{ animationDelay: '3s' }}>
+                {reading.interpretation.insights.map((insight, index) => (
+                  <li key={index}>{insight}</li>
+                ))}
+              </ul>
             </div>
-            
-            {showChat && (
-              <TarotChat 
-                reading={reading} 
-                conversations={conversations}
-                setConversations={setConversations}
-              />
-            )}
-          </div>
+          )}
+          
+          {displayStage === 3 && (
+            <div className={`${styles.chatSection} ${styles.fadeIn}`}>
+              <div className={styles.chatToggle}>
+                <button 
+                  className={styles.toggleButton}
+                  onClick={() => setShowChat(!showChat)}
+                >
+                  {showChat ? 'Hide Chat' : 'Discuss Your Reading'}
+                </button>
+              </div>
+              
+              {showChat && (
+                <TarotChat 
+                  reading={reading} 
+                  conversations={conversations}
+                  setConversations={setConversations}
+                />
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

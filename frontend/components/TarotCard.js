@@ -1,32 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from '../styles/TarotCard.module.css';
 
-export default function TarotCard({ card }) {
-  const [flipped, setFlipped] = useState(false);
-  const isReversed = card.reversed;
+export default function TarotCard({ card, isFlipped, animationDelay, isVisible }) {
+  const isReversed = card.is_reversed;
   
-  // Simplified card back pattern 
+  // Card back pattern 
   const cardBack = (
     <div className={styles.cardBack}>
-      <div className={styles.pattern}>
-        <div className={styles.circle}></div>
-        <div className={styles.star}></div>
-      </div>
+      <Image
+        src="/cards/card-back.jpg"
+        alt="Card Back"
+        width={240}
+        height={400}
+        layout="responsive"
+      />
     </div>
   );
   
-  // Card front with name and simplified visualization
+  // Card front with image
   const cardFront = (
     <div className={styles.cardFront}>
-      <h3 className={styles.cardName}>{card.name}</h3>
+      <div className={styles.cardImage}>
+        <Image
+          src={`/cards/${card.img}`}
+          alt={card.name}
+          width={240}
+          height={400}
+          layout="responsive"
+          className={isReversed ? styles.reversedImage : ''}
+        />
+      </div>
       <div className={styles.cardInfo}>
+        <h3 className={styles.cardName}>{card.name}</h3>
         <p className={styles.cardArcana}>{card.arcana} Arcana</p>
         {card.suit && <p className={styles.cardSuit}>Suit of {card.suit}</p>}
+        {isReversed && <div className={styles.reversedLabel}>Reversed</div>}
       </div>
-      <div className={styles.cardSymbol}>
-        {getCardSymbol(card)}
-      </div>
-      {isReversed && <div className={styles.reversedLabel}>Reversed</div>}
     </div>
   );
   
@@ -35,12 +45,15 @@ export default function TarotCard({ card }) {
       className={`
         ${styles.card} 
         ${isReversed ? styles.reversed : ''} 
-        ${flipped ? styles.flipped : ''}
+        ${isFlipped ? styles.flipped : ''}
+        ${isVisible ? styles.visible : ''}
       `}
-      onClick={() => setFlipped(!flipped)}
+      style={{ 
+        transitionDelay: `${isFlipped ? animationDelay : 0}s`
+      }}
     >
       <div className={styles.cardInner}>
-        {flipped ? cardFront : cardBack}
+        {isFlipped ? cardFront : cardBack}
       </div>
     </div>
   );
