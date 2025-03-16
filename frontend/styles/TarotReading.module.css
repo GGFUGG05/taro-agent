@@ -1,0 +1,179 @@
+.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+  }
+  
+  .readingForm {
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  .formRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .formRow .formGroup {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #34495e;
+  }
+  
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  
+  .textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .checkbox {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .button {
+    background-color: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: block;
+    width: 100%;
+  }
+  
+  .button:hover {
+    background-color: #703688;
+  }
+  
+  .button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
+  
+  .readingResult {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .readingTitle {
+    text-align: center;
+    color: #8e44ad;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+  
+  .cardsContainer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .cardPosition {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 180px;
+  }
+  
+  .positionTitle {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-size: 1.2rem;
+  }
+  
+  .interpretation {
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .interpretation h3 {
+    color: #8e44ad;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .cardMeaning {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  
+  .cardMeaning h4 {
+    color: #34495e;
+    margin-bottom: 0.5rem;
+  }
+  
+  .insights {
+    padding-left: 1.5rem;
+  }
+  
+  .insights li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .chatToggle {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  .toggleButton {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .toggleButton:hover {
+    background-color: #2980b9;
+  }

@@ -1,23 +1,18 @@
 import Head from 'next/head';
-import TaroChat from '../components/TaroChat';
+import TarotReading from '../components/TarotReading';
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Taro AI Agent</title>
-        <meta name="description" content="Unveal your destiny" />
+        <title>Taro Tarot Reader</title>
+        <meta name="description" content="Taro Tarot Reader powered by AI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Taro AI Agent</h1>
-        <p className={styles.description}>
-          Unveal your destiny
-        </p>
-        
-        <TaroChat />
+        <TarotReading />
       </main>
 
       <footer className={styles.footer}>

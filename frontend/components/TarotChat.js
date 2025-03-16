@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import styles from '../styles/Home.module.css';
+import styles from '../styles/TarotChat.module.css';
 
-export default function TaroChat() {
+export default function TarotChat({ reading, conversations, setConversations }) {
   const [question, setQuestion] = useState('');
-  const [context, setContext] = useState('');
-  const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -31,25 +29,25 @@ export default function TaroChat() {
         content: msg.content
       }));
       
-      const response = await fetch('/api/proxy', {
+      const response = await fetch('/api/proxy/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          question, 
-          context,
+          reading_result: reading,
+          question,
           conversation_history: conversationHistory
         }),
       });
       
       if (!response.ok) {
-        throw new Error('Failed to get response from Taro');
+        throw new Error('Failed to get response from Tarot reader');
       }
       
       const data = await response.json();
       
-      // Add Taro's response to conversation
+      // Add Tarot reader's response to conversation
       setConversations([
         ...conversations, 
         { role: 'user', content: question },
@@ -63,7 +61,7 @@ export default function TaroChat() {
       setConversations([
         ...conversations,
         { role: 'user', content: question },
-        { role: 'assistant', content: 'Sorry, there was an error processing your request.' }
+        { role: 'assistant', content: 'Sorry, there was an error processing your request. Please try asking again.' }
       ]);
     } finally {
       setLoading(false);
@@ -75,7 +73,7 @@ export default function TaroChat() {
       <div className={styles.chatArea}>
         {conversations.length === 0 ? (
           <div className={styles.emptyChat}>
-            <p>Ask Taro a question to start a conversation!</p>
+            <p>Ask a question about your Tarot reading</p>
           </div>
         ) : (
           <div className={styles.messages}>
@@ -92,7 +90,7 @@ export default function TaroChat() {
             {loading && (
               <div className={`${styles.message} ${styles.assistantMessage}`}>
                 <div className={styles.messageContent}>
-                  <span className={styles.typing}>Taro is thinking...</span>
+                  <span className={styles.typing}>Reading the cards...</span>
                 </div>
               </div>
             )}
@@ -103,34 +101,23 @@ export default function TaroChat() {
       
       <div className={styles.inputArea}>
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}>
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              className={styles.textarea}
-              placeholder="Ask Taro a question..."
-              rows={3}
-              required
-            />
-          </div>
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            className={styles.input}
+            placeholder="Ask about your reading..."
+            disabled={loading}
+          />
           
-          <button type="submit" className={styles.button} disabled={loading || !question.trim()}>
-            {loading ? 'Sending...' : 'Send'}
+          <button 
+            type="submit" 
+            className={styles.button} 
+            disabled={loading || !question.trim()}
+          >
+            Send
           </button>
         </form>
-      </div>
-      
-      <div className={styles.contextArea}>
-        <div className={styles.inputGroup}>
-          <label htmlFor="context">Additional context (optional):</label>
-          <textarea
-            id="context"
-            value={context}
-            onChange={(e) => setContext(e.target.value)}
-            className={styles.contextTextarea}
-            rows={2}
-          />
-        </div>
       </div>
     </div>
   );

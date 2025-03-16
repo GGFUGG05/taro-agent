@@ -1,0 +1,128 @@
+.card {
+    width: 150px;
+    height: 250px;
+    perspective: 1000px;
+    cursor: pointer;
+    margin: 0 auto;
+  }
+  
+  .cardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  
+  .flipped .cardInner {
+    transform: rotateY(180deg);
+  }
+  
+  .cardBack, .cardFront {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .cardBack {
+    background: linear-gradient(45deg, #34495e, #2c3e50);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .pattern {
+    width: 80%;
+    height: 80%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.1) 10px,
+      rgba(0, 0, 0, 0.2) 10px,
+      rgba(0, 0, 0, 0.2) 20px
+    );
+  }
+  
+  .circle {
+    width: 50px;
+    height: 50px;
+    border: 2px solid gold;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .star {
+    color: gold;
+    font-size: 24px;
+    position: relative;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .star::before {
+    content: "★";
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 30px;
+  }
+  
+  .cardFront {
+    background-color: white;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    color: #333;
+    border: 5px solid #8e44ad;
+  }
+  
+  .reversed .cardFront {
+    transform: rotateY(180deg) rotate(180deg);
+  }
+  
+  .cardName {
+    font-size: 1rem;
+    margin: 0;
+    color: #8e44ad;
+    text-align: center;
+  }
+  
+  .cardInfo {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    margin-top: 0.5rem;
+  }
+  
+  .cardInfo p {
+    margin: 0.2rem 0;
+  }
+  
+  .cardSymbol {
+    font-size: 3rem;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .reversedLabel {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
